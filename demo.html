@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+  <script defer src="./js/Winwheel.min.js"></script>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/common.css">
+  <title>Roulette Event</title>
+</head>
+
+<body>
+  <div id="wrap">
+    <!--룰렛 캔버스-->
+    <div class="theWheel">
+      <div id="title">
+        <!--타이틀이미지-->
+        <img src="./image/wroulette_title.png" alt="title">
+      </div>
+      <div class="needle">
+        <!--회전침 이미지-->
+        <img src="./image/needle.png" alt="needle">
+      </div>
+      <!--시작/멈춤 버튼-->
+      <div id="buttons">
+        <div id="startBtn" class="btns">
+          <img src="./image/start.png" alt="startBtn">
+        </div>
+        <div id="stopBtn" class="btns">
+          <img src="./image/stop.png" alt="startBtn">
+        </div>
+        <div id="waitBtn" class="btns">
+          <img src="./image/wait.png" alt="waitBtn">
+        </div>
+      </div>
+      <div class="roulette">
+        <!--룰렛 배경이미지-->
+        <img src="./image/wroulette.png" alt="rouletteBg">
+      </div>
+      <canvas id="canvas" width="300" height="300"></canvas>
+    </div>
+  </div>
+
+  <script>
+    $(function () {
+      var wheelSpinning = false;
+
+      //휠 객체 생성
+      var theWheel = new Winwheel({
+        'numSegments': 8,
+        'outerRadius': 135, // 캔버스 영억 반지름
+        'textFontSize': 18,
+        'responsive': true,
+        'drawMode': 'code',
+        'segments': [{
+            'fillStyle': '#eae56f',
+            'text': 'Prize 1'
+          },
+          {
+            'fillStyle': '#89f26e',
+            'text': 'Prize 2'
+          },
+          {
+            'fillStyle': '#7de6ef',
+            'text': 'Prize 3'
+          },
+          {
+            'fillStyle': '#e7706f',
+            'text': 'Prize 4'
+          },
+          {
+            'fillStyle': '#eae56f',
+            'text': 'Prize 5'
+          },
+          {
+            'fillStyle': '#89f26e',
+            'text': 'Prize 6'
+          },
+          {
+            'fillStyle': '#7de6ef',
+            'text': 'Prize 7'
+          },
+          {
+            'fillStyle': '#e7706f',
+            'text': 'Prize 8'
+          }
+
+        ],
+        'animation': {
+          'type': 'spinToStop',
+          'duration': 1,
+          'spins': 4,
+          'easing': 'Power0.easeOut',
+          'stopAngle': null,
+          'direction': 'clockwise',
+          'repeat': -1,
+          'yoyo': false,
+          callbackFinished: alertPrize
+        }
+      });
+
+
+      // START 버튼 클릭 이벤트
+      $('#startBtn').on('click', function () {
+        // startBtn을 감추고 stopBtn을 화면에 출력
+        $('#startBtn').css({
+          display: 'none'
+        });
+
+        $('#stopBtn').css({
+          display: 'block'
+        });
+
+        // 스핀 애니메이션 실행
+        theWheel.startAnimation();
+      });
+
+
+      // STOP 버튼 클릭 이벤트
+      $('#stopBtn').on('click', function () {
+        // 실행 중인 동안에 회전이 클릭 되지 않도록 설정
+        if (wheelSpinning == false) {
+          // 회전 중 클릭 되지 않도록 wheelSpinning 값을 true로 변경
+          wheelSpinning = true;
+
+          // theWheel repeat값을 -1에서 0으로 변경 (무한 반복 ==> 멈춤)
+          theWheel.animation.repeat = 0;
+          // theWheel easing 값 변경 
+          theWheel.animation.easing = "Power3.easeOut";
+          // 지속시간 변경
+          theWheel.animation.duration = 3;
+          // 회전 수 변경
+          theWheel.animation.spins = 8;
+
+          // 확률로 값을 지정하는 calculatePrize 함수 실행
+          calculatePrize();
+        }
+
+        // spinBtn을 감추고 stopBtn을 화면에 출력
+        $('#stopBtn').css({
+          display: 'none'
+        });
+        $('#waitBtn').css({
+          display: 'block'
+        });
+
+        // 스핀 애니메이션 실행
+        theWheel.startAnimation();
+      });
+
+      // -----------------------------------------------
+      // 회전하기 전에 stopAngle을 미리 정하는 함수 
+      // (stopBtn 클릭 이벤트에서 호출)
+      // -----------------------------------------------
+      function calculatePrize() {
+        // 1부터 100 사이의 랜덤한 수를 출력
+        var ranNum = Math.floor(Math.random() * 100) + 1;
+        var stopAt = 0;
+        var segment_angle = 360 / parseInt(theWheel.numSegments);
+
+        console.log(ranNum);
+
+        if (ranNum === 1) {
+          stopAt = Math.floor((Math.random() * (segment_angle - 10)));
+        } else if (ranNum === 2) {
+          stopAt = ((segment_angle) + 5) + Math.floor((Math.random() * (segment_angle - 10)));
+        } else if (ranNum === 3) {
+          stopAt = ((segment_angle * 2) + 5) + Math.floor((Math.random() * (segment_angle - 10)));
+        } else if (ranNum === 4) {
+          stopAt = ((segment_angle * 3) + 5) + Math.floor((Math.random() * (segment_angle - 10)));
+        } else if (ranNum === 5) {
+          stopAt = ((segment_angle * 4) + 5) + Math.floor((Math.random() * (segment_angle - 10)));
+        } else if (ranNum === 6) {
+          stopAt = ((segment_angle * 5) + 5) + Math.floor((Math.random() * (segment_angle - 10)));
+        } else if (ranNum === 7) {
+          stopAt = ((segment_angle * 6) + 5) + Math.floor((Math.random() * (segment_angle - 10)));
+        } else {
+          stopAt = ((segment_angle * 7) + 5) + Math.floor((Math.random() * (segment_angle - 10)));
+        }
+
+        // 애니메이션이 회전 되기 전에 stopAngle 값을 지정
+        theWheel.animation.stopAngle = stopAt;
+
+        // 회전 시작
+        theWheel.startAnimation();
+      }
+
+      // -----------------------------------------------
+      // 리셋 함수
+      // -----------------------------------------------
+      function resetWheel() {
+        // 콜백 기능이 작동하지 않도록 매개 변수처럼 false인 애니메이션을 중지
+        theWheel.stopAnimation(false);
+        // 휠의 angle을 0도로 리셋
+        theWheel.rotationAngle = 0;
+        // 휠을 초기값으로 리셋
+        theWheel.draw();
+        // 스핀 반복을 무한반복으로 변경
+        theWheel.animation.repeat = -1;
+        // theWheel easing 값 변경 
+        theWheel.animation.easing = "Power0.easeOut";
+        // 지속시간 변경
+        theWheel.animation.duration = 1;
+        // 회전 수 변경
+        theWheel.animation.spins = 4;
+
+        // stopBtn을 감추고 spinBtn을 다시 화면에 출력
+        $('#stopBtn').css({
+          display: 'none'
+        });
+        $('#waitBtn').css({
+          display: 'none'
+        });
+        $('#startBtn').css({
+          display: 'block'
+        });
+
+        $(".resultBox").css({
+          top: '-100%'
+        });
+
+        // 스핀버튼을 다시 사용할 수 있도록 wheelSpinning 값을 false로 변경
+        wheelSpinning = false;
+      }
+
+      // -----------------------------------------------
+      // 애니메이션 종료 후 호출되는 함수
+      // -----------------------------------------------
+      function alertPrize(indicatedSegment) {
+        alert(`${indicatedSegment.text} 당첨!`);
+        resetWheel();
+      }
+    });
+  </script>
+</body>
+
+</html>
