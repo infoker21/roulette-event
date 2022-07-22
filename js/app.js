@@ -112,8 +112,6 @@ function calculatePrize() {
 
   const RANDOM_NUMBER = Math.floor(Math.random() * 10000) + 1; // 1부터 100 사이의 랜덤한 수를 출력
 
-  console.log(RANDOM_NUMBER);
-  
   let stop_angle = 0;
   let segment_angle = 360 / parseInt(roulette.numSegments);
 
