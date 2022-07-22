@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap&subset=korean"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script defer src="./js/Winwheel.min.js"></script>
+    <script defer src="./js/app.js"></script>
+    <title>Roulette</title>
+  </head>
+
+  <body>
+    <div id="viewport">
+      <div class="roulette">
+        <h1 class="roulette-tit">Roulette Event</h1>
+        <!-- 원판 -->
+        <div class="roulette-plate">
+          <canvas id="canvas" width="400" height="400"></canvas>
+        </div>
+
+        <!-- 시작버튼 -->
+        <nav class="roulette-btn">
+          <button type="button">START!</button>
+        </nav>
+      </div>
+    </div>
+  </body>
+</html>
